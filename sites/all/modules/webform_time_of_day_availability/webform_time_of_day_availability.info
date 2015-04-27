@@ -1,0 +1,4 @@
+name = Custom Webform Pre Built list for time of day availability
+description = Option list for the times of day available
+core = 7.x
+dependencies[] = webform

@@ -1,0 +1,17 @@
+name =  Commerce Funds Deposit
+description = Allow users to deposit funds to thier account
+core = 7.x
+dependencies[] = commerce_funds
+dependencies[] = rules
+dependencies[] = commerce_cart
+dependencies[] = commerce_order
+dependencies[] = commerce_checkout
+dependencies[] = commerce_line_item_ui
+
+package = "Commerce Funds"
+; Information added by Drupal.org packaging script on 2014-04-04
+version = "7.x-2.x-dev"
+core = "7.x"
+project = "commerce_funds"
+datestamp = "1396602252"
+

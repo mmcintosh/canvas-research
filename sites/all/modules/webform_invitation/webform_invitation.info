@@ -1,0 +1,13 @@
+name = Webform Invitation
+description = Provides random strings that can be used as codes for accessing a specific webform.
+core = 7.x
+package = Webform
+dependencies[] = webform
+dependencies[] = token
+
+; Information added by Drupal.org packaging script on 2014-08-20
+version = "7.x-2.3"
+core = "7.x"
+project = "webform_invitation"
+datestamp = "1408569835"
+

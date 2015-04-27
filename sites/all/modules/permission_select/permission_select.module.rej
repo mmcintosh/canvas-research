@@ -1,0 +1,12 @@
+--- permission_select.module
++++ permission_select.module
+@@ -46,8 +46,8 @@
+   foreach (element_children($form['permission']) as $key) {
+     $row = array();
+     // Module name
++    $mod_name = t($form['permission'][$key]['#id']);
+     if (is_numeric($key)) {
+-			$mod_name = t($form['permission'][$key]['#id']);
+       $row[] = array('data' => drupal_render($form['permission'][$key]), 'class' => array('module module_name'), 'id' => 'module-' . $mod_name, 'colspan' => count($form['role_names']['#value']) + 1);
+     }
+     else {

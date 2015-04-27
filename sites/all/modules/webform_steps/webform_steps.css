@@ -1,0 +1,64 @@
+.webform-steps-wrapper {
+  background: #F7F5E8;
+  border-top: 1px solid #eae5c2;
+  border-bottom: 1px solid #eae5c2;
+  font-size: 0.9em;
+}
+.webform-steps-wrapper span.webform-step {
+  padding-left: 14px;
+  display: inline-block;
+  background: url('arrow_head.png') no-repeat 0px -82px #C7C5BB;
+  border-top: 1px solid #b0ad9f;
+  border-bottom: 1px solid #b0ad9f;
+  color: #e6e6e6;
+  margin-top: -1px;
+  margin-bottom: -1px;
+}
+.webform-steps-wrapper span.webform-step span {
+  display: block;
+  padding: .3em .6em .3em .6em;
+  background-color: #C7C5BB;
+}
+.webform-steps-wrapper span.webform-step input {
+  display: none;
+}
+.webform-steps-wrapper span.current {
+  color: #fff;
+}
+.webform-steps-wrapper span.first {
+  background: none;
+  padding-left: 0;
+}
+.webform-steps-wrapper span.first span {
+  padding-left: 14px;
+  margin-left: -1px;
+}
+.webform-steps-wrapper span.disabled {
+  padding-left: 14px;
+  display: inline-block;
+  background: url('arrow_head.png') no-repeat -1px -42px transparent;
+  color: #b2afa1;
+  border-top: 1px solid #eae5c2;
+  border-bottom: 1px solid #eae5c2;
+}
+.webform-steps-wrapper span.disabled span {
+  background-color: transparent;
+}
+.webform-steps-wrapper span.webform-step {
+  cursor: pointer;
+}
+.webform-steps-wrapper span.disabled,
+.webform-steps-wrapper span.current {
+  cursor: default;
+}
+.webform-steps-wrapper span.first-disabled {
+  background-position: -2px -2px;
+  border-top: 1px solid #eae5c2;
+  border-bottom: 1px solid #eae5c2;
+}
+.webform-steps-wrapper span.first-disabled span {
+  background-color: transparent;
+}
+.webform-steps-wrapper span.last {
+  padding-right: 14px;
+}

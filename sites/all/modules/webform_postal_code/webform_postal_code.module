@@ -1,0 +1,345 @@
+<?php
+
+/**
+ * @file
+ * Webform postal code module.
+ */
+
+// Define comonent and its basic capabilities
+function webform_postal_code_webform_component_info() {
+  $components = array();
+  $components['postal_code'] = array(
+    'label' => t('Postal code'),
+    'description' => t('Create a postal code field with country-specific validation.'),
+    'features' => array(
+      'csv' => TRUE,
+      'email' => TRUE,
+      'email_address' => FALSE,
+      'email_name' => FALSE,
+      'required' => TRUE,
+      'title_display' => TRUE,
+      'title_inline' => TRUE,
+      'conditional' => TRUE,
+      'group' => FALSE,
+      'spam_analysis' => FALSE,
+      'attachment' => FALSE,
+    ),
+  );
+  return $components;
+}
+
+/**
+ * Implements _webform_defaults_component().
+ */ 
+function _webform_defaults_postal_code() {
+  return array(
+    'name' => '',
+    'form_key' => NULL,
+    'pid' => 0,
+    'weight' => 0,
+    'value' => '',
+    'mandatory' => 0,
+    'extra' => array(
+      'width' => '',
+      'disabled' => FALSE,
+      'countries' => '',
+      'whitespace' => 0,
+      'private' => FALSE,
+    ),
+  );
+}
+
+/**
+ * Implements _webform_theme_component().
+ */
+function _webform_theme_postal_code() {
+  return array(
+    'webform_display_postal_code' => array(
+      'render element' => 'element',
+    ),
+  );
+}
+
+/**
+ * Implements _webform_edit_component().
+ */
+function _webform_edit_postal_code($component) {
+  $form = array();
+  $form['value'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Default value'),
+    '#default_value' => $component['value'],
+    '#description' => t('The default value of the field.') . theme('webform_token_help'),
+    '#size' => 10,
+    '#weight' => -1,
+  );
+  $form['display']['width'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Width'),
+    '#default_value' => $component['extra']['width'],
+    '#description' => t('Width of the postal code field.') . ' ' . t('Leaving blank will use the default size.'),
+    '#size' => 5,
+    '#maxlength' => 10,
+    '#weight' => 0,
+    '#parents' => array('extra', 'width'),
+  );
+    $form['display']['disabled'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Disabled'),
+    '#return_value' => 1,
+    '#description' => t('Make this field non-editable. Useful for setting an unchangeable default value.'),
+    '#weight' => 1,
+    '#default_value' => $component['extra']['disabled'],
+    '#parents' => array('extra', 'disabled'),
+  );
+  // This array comes from postal_code_validation module.
+  // It's not currently reachable via the API.
+  $form['validation']['countries'] = array(
+    '#type' => 'select',
+    '#title' => t('Countries to include in Validation'),
+    '#default_value' => $component['extra']['countries'],
+    '#description' => t('If multiple countries are chosen, data that fits the format for any single one of them will validate.  If no countries are chosen, no validation will occur.'),
+    '#options' => array(
+      'DZ' => t('Algeria'),
+      'AD' => t('Andorra'),
+      'AR' => t('Argentina'),
+      'AU' => t('Australia'),
+      'BD' => t('Bangladesh'),
+      'BY' => t('Belarus'),
+      'BE' => t('Belgium'),
+      'BR' => t('Brazil'),
+      'BN' => t('Brunei'),
+      'CA' => t('Canada'),
+      'CL' => t('Chile'),
+      'CN' => t('China'),
+      'HR' => t('Croatia'),
+      'CY' => t('Czech Republic'),
+      'DK' => t('Denmark'),
+      'EE' => t('Estonia'),
+      'EG' => t('Egypt'),
+      'FR' => t('France'),
+      'DE' => t('Germany'),
+      'GW' => t('Guinea-Bissau'),
+      'HU' => t('Hungary'),
+      'IN' => t('India'),
+      'IT' => t('Italy'),
+      'JP' => t('Japan'),
+      'NL' => t('Netherlands'),
+      'NZ' => t('New Zealand'),
+      'PT' => t('Portugal'),
+      'RU' => t('Russia'),
+      'ES' => t('Spain'),
+      'SE' => t('Sweden'),
+      'GB' => t('United Kingdom'),
+      'US' => t('United States'),
+    ),
+    '#multiple' => TRUE,
+    '#weight' => 2,
+    '#parents' => array('extra', 'countries'),
+  );
+  $form['validation']['whitepace'] = array(
+    '#type' => 'select',
+    '#title' => t('Whitespace handling'),
+    '#multiple' => FALSE,
+    '#description' => t('Automatically remove whitespace from postal code vales or add missing whitepace to postal codes that fit the "ZZZ ZZZ" format.  Useful to maintain data integrity for countries such as Canada where postal codes validate with and without spaces.'),
+    '#options' => array(
+      0 => t('None'),
+      1 => t('Remove all whitespace'),
+      2 => t('Add missing whitespace'),
+    ),
+    '#weight' => 3,
+    '#default_value' => $component['extra']['whitespace'],
+    '#parents' => array('extra', 'whitespace'),
+  );
+  return $form;
+}
+
+/**
+ * Implements _webform_render_component().
+ */
+function _webform_render_postal_code($component, $value = NULL, $filter = TRUE) {
+  $node = isset($component['nid']) ? node_load($component['nid']) : NULL;
+
+  $element = array(
+    '#type' => 'textfield',
+    '#title' => $filter ? _webform_filter_xss($component['name']) : $component['name'],
+    '#title_display' => $component['extra']['title_display'] ? $component['extra']['title_display'] : 'before',
+    '#default_value' => $filter ? _webform_filter_values($component['value'], $node, NULL, NULL, FALSE) : $component['value'],
+    '#required' => $component['mandatory'],
+    '#weight' => $component['weight'],
+    '#theme_wrappers' => array('webform_element'),
+    '#translatable' => array('title', 'description'),
+  );
+
+  // Handle disabling.
+  if ($component['extra']['disabled']) {
+    if ($filter) {
+      $element['#attributes']['readonly'] = 'readonly';
+    }
+    else {
+      $element['#disabled'] = TRUE;
+    }
+  }
+
+  // Check for whitespace removal.
+  if ($component['extra']['whitespace'] == 1) {
+    $element['#value_callback'] = 'webform_postal_code_value';
+  }
+
+  // Add validation if one or more countries selected.
+  if (!empty($component['extra']['countries'])) {
+    $element['#element_validate'] = array('webform_postal_code_validate');
+  }
+
+  // Change the 'width' option to the correct 'size' option.
+  if ($component['extra']['width'] > 0) {
+    $element['#size'] = $component['extra']['width'];
+  }
+
+  if (isset($value)) {
+    $element['#default_value'] = $value[0];
+  }
+  return $element;
+}
+
+/**
+ * Implements _webform_display_component().
+ */
+function _webform_display_postal_code($component, $value, $format = 'html') {
+  return array(
+    '#title' => $component['name'],
+    '#weight' => $component['weight'],
+    '#theme' => 'webform_display_postal_code',
+    '#theme_wrappers' => $format == 'html' ? array('webform_element') : array('webform_element_text'),
+    '#format' => $format,
+    '#value' => $value[0],
+    '#translatable' => array('title'),
+  );
+}
+
+/**
+ * Custom Theme function for collected postal code data.
+ */
+function theme_webform_display_postal_code($variables) {
+  $element = $variables['element'];
+  $value = $element['#value'];
+  return $value;
+}
+
+/**
+ * Implements _webform_analysis_component().
+ */
+function _webform_analysis_postal_code($component, $sids = array()) {
+  $query = db_select('webform_submitted_data', 'wsd', array('fetch' => PDO::FETCH_ASSOC))
+    ->fields('wsd', array('data'))
+    ->condition('nid', $component['nid'])
+    ->condition('cid', $component['cid']);
+
+  if (count($sids)) {
+    $query->condition('sid', $sids, 'IN');
+  }
+
+  $nonblanks = 0;
+  $submissions = 0;
+
+  // This could probably be extended to count submissions by
+  // country using the postal_code_validation API. 
+  $result = $query->execute();
+  foreach ($result as $data) {
+    if (drupal_strlen(trim($data['data'])) > 0) {
+      $nonblanks++;
+    }
+    $submissions++;
+  }
+
+  $rows[0] = array(t('Left Blank'), ($submissions - $nonblanks));
+  $rows[1] = array(t('User entered value'), $nonblanks);
+  return $rows;
+}
+
+/**
+ * Implements _webform_table_component().
+ */
+function _webform_table_postal_code($component, $value) {
+  return check_plain(empty($value[0]) ? '' : $value[0]);
+}
+
+/**
+ * Implements _webform_csv_headers_component().
+ */
+function _webform_csv_headers_postal_code($component, $export_options) {
+  $header = array();
+  $header[0] = $component['name'];
+  return $header;
+}
+
+/**
+ * Implements _webform_csv_data_component().
+ */
+function _webform_csv_data_postal_code($component, $export_options, $value) {
+  return !isset($value[0]) ? '' : $value[0];
+}
+
+/**
+ * Validate postal code against selcted countries
+ */
+function webform_postal_code_validate($element, &$form_state) {
+ 
+  // Check to see if whitespace should be added.
+  if ($element['#webform_component']['extra']['whitespace'] == 2) {
+    // Add whitespace if necessary.
+    $form_state['values']['submitted'][$element['#webform_component']['form_key']] = webform_postal_code_add_whitespace($form_state['values']['submitted'][$element['#webform_component']['form_key']]);  
+  }
+
+  // Check for postal_code_validation module, ensure that data has been
+  // entered and that country-based validation is active.
+  if (module_exists('postal_code_validation') && $element['#value'] != NULL) {
+
+    $validation = FALSE;
+    // Message to be used if multiple countries selected.
+    $message = t('The postal code format you have chosen is incorrect.');
+
+    // Cycle through array of countries and validate postal code for each.
+    foreach ($element['#webform_component']['extra']['countries'] as $country) {
+      $result = postal_code_validation_validate($element['#value'], $country);
+      // If no errors encountered for at least one country set validation to TRUE.
+      if (!$result['error']) {
+        $validation = TRUE;
+      } else {
+        // If only one country being validated provided country-specific feedback.
+        if (count($element['#webform_component']['extra']['countries']) == 1) { 
+          $message = t($result['error']);
+        }
+      } 
+    }
+    
+    // If validation has failed, provide feedback.
+    if (!$validation) {
+      form_error($element, $message);
+    }
+  }  
+}
+
+/**
+ * Filter postal code before save.
+ */
+function webform_postal_code_value($element, $input = FALSE, $form_state) {
+  
+  // Check for input.
+  if ($input) {
+    // Strip whitespace from postal codes
+    return str_replace(' ', '', $input);
+  }
+}
+
+/**
+ * Add whitespace if warranted.
+ */
+function webform_postal_code_add_whitespace($value) {
+  // add space if value is 6 characters long and alphanumeric.
+  if (strlen($value) == 6 && ctype_alnum($value)) {
+    $value = substr($value, 0, 3) . ' ' . substr($value, 3, 3); 
+  }
+
+  return $value;
+}

@@ -1,0 +1,31 @@
+<?php 
+
+/**
+ * Implementation of hook_webform_select_options_info().
+ * See webform/webform_hooks.php for further information on this hook in the Webform API.
+ */
+function webform_time_of_day_availability_webform_select_options_info() {
+    $items = array();
+    $items['Availability'] = array(
+        'title' => t('Availability'),
+        'options callback' => 'time_of_day_availability'
+    );
+
+   return $items;
+}
+
+/**
+ * Build an options list to be used with webforms select list based in drupal roles
+ */
+function time_of_day_availability() {
+ $available_day = array(date("D M jS, Y"), date("D M jS, Y", strtotime('+1 day')), date("D M jS, Y", strtotime('+2 days')));
+ $available_time = array("Morning","Afternoon","Evening");
+ $availability = array();
+	for ($x = 0; $x < 3; $x++) {
+      for ($y = 0; $y < 3; $y++) {
+          array_push($availability, $available_day[$x] . " - " . $available_time[$y]);
+      }
+    } 
+    array_unshift($availability, " ");   
+    return $availability;
+ }

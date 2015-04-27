@@ -1,0 +1,13 @@
+diff --git a/permission_select.module b/permission_select.module
+--- a/permission_select.module
++++ b/permission_select.module
+@@ -46,8 +46,8 @@ function permission_select_theme_user_admin_perm($variables) {
+   foreach (element_children($form['permission']) as $key) {
+     $row = array();
+     // Module name
++    $mod_name = t($form['permission'][$key]['#id']);
+     if (is_numeric($key)) {
+-			$mod_name = t($form['permission'][$key]['#id']);
+       $row[] = array('data' => drupal_render($form['permission'][$key]), 'class' => array('module module_name'), 'id' => 'module-' . $mod_name, 'colspan' => count($form['role_names']['#value']) + 1);
+     }
+     else {

@@ -1,0 +1,14 @@
+name = Webform Postal Code
+description = Adds a component and validation for a variety of international postal code types (including American zipcodes).
+core = 7.x
+version = 1.0-beta3
+package = Webform
+dependencies[] = webform
+dependencies[] = postal_code_validation
+
+; Information added by drupal.org packaging script on 2013-03-18
+version = "7.x-1.0-beta3"
+core = "7.x"
+project = "webform_postal_code"
+datestamp = "1363568724"
+

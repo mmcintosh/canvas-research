@@ -1,0 +1,32 @@
+--- imagecrop.module"
++++ imagecrop.module"
+@@ -292,8 +292,10 @@
+  * Implements hook_element_info_alter().
+  */
+ function imagecrop_element_info_alter(&$type) {
+-  $type['managed_file']['#after_build'][] = 'imagecrop_process_form_element';
+-  $type['media']['#after_build'][] = 'imagecrop_process_form_element';
++  //$type['managed_file']['#after_build'][] = 'imagecrop_process_form_element';
++  //$type['media']['#after_build'][] = 'imagecrop_process_form_element';
++  $type['managed_file']['#process'][] = 'imagecrop_process_form_element';
++  $type['media']['#process'][] = 'imagecrop_process_form_element';
+ }
+ 
+ /**
+@@ -403,9 +405,14 @@
+ 
+     $element['#attributes']['class'][] = 'imagecrop-media';
+ 
++	$mpath = drupal_get_path('module', 'media') . '/' . 'media' . '.info';
++	$minfo = drupal_parse_info_file($mpath);
++	preg_match("|7.*-(\d)\.|", $minfo['version'], $mver);
++	$media_version = $mver[1];
+     // Old versus new version of media
+-    if (isset ($element['remove'])) {
+-      $element['remove']['#prefix'] = imagecrop_linkitem($element, $variables);
++    if ($media_version > 1 || isset ($element['remove'])) {
++      //$element['remove']['#prefix'] = imagecrop_linkitem($element, $variables);
++      $element['preview']['#suffix'] .= imagecrop_linkitem($element, $variables);
+     }
+     else {
+       $variables['js_file'] = 'imagecrop_field_media_v1.js';

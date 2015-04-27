@@ -1,0 +1,20 @@
+<?php
+/**
+ * Implementation of hook_webform_select_options_info.
+ */
+function webform_users_list_webform_select_options_info() {
+  $items = array();
+
+  $items['users_list'] = array(
+    'title' => t('List of registered users'),
+    'options callback' => 'webform_users_list_get_list',
+    'options arguments' => array(),
+  );
+
+  return $items;
+}
+
+function webform_users_list_get_list($component, $flat, $filter, $arguments) {
+  // Get list of users through a method such as EntityFieldQuery or db_select.
+  return $users;
+}

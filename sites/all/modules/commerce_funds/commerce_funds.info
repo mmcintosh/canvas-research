@@ -1,0 +1,19 @@
+name =  Commerce Funds
+description = Drupal funds management system
+core = 7.x
+
+dependencies[] = commerce
+dependencies[] = commerce_payment
+dependencies[] = rules
+dependencies[] = commerce_checkout
+
+; Views handlers
+files[] = includes/views/handlers/commerce_funds_handler_field_amount.inc
+
+package = Commerce Funds
+; Information added by Drupal.org packaging script on 2014-04-04
+version = "7.x-2.x-dev"
+core = "7.x"
+project = "commerce_funds"
+datestamp = "1396602252"
+

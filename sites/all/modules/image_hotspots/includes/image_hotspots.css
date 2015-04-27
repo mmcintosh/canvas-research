@@ -1,0 +1,121 @@
+/* edit hotspots */
+.image-hotspot-edit {
+  clear: both;
+}
+.image-hotspot-img {
+  float: left;
+}
+.image-hotspot-form {
+  display: none;
+}
+.image-hotspot-data {
+  float: left;
+  border: 1px solid #ccc;
+  width: 200px;
+  margin-left: 10px;
+  background-color: #eee;
+  padding: 7px;
+}
+.image-hotspot-data label {
+  font-size: 10px;
+  font-weight: normal;
+}
+.image-hotspot-data input {
+  width: 100%;
+  box-sizing: border-box;
+}
+.image-hotspot-data-item {
+  padding: 3px;
+  border: 1px solid #ddd;
+  margin-bottom: 3px;
+}
+.img-hotspot-data-title {
+  cursor: pointer;
+}
+.img-hotspot-data-wrapper {
+
+}
+
+/* view hotspots */
+.image-hotspot-wrapper {
+  position: relative;
+  clear: both;
+}
+.img-hotspot {
+  width: 100%;
+  height: 100%;
+  opacity: 0.3;
+  filter:progid:DXImageTransform.Microsoft.Alpha(opacity=20);
+}
+.img-hotspot-title {
+  font-size: 12px;
+  line-height: 12px;
+}
+.img-hotspot-description {
+  font-size: 10px;
+  line-height: 10px;
+  margin-top: 5px;
+}
+.hotspot-title {
+  cursor: pointer;
+}
+.hotspot-title:hover {
+  text-decoration: underline;
+}
+.hotspot-overlay {
+  background: #000;
+  opacity: 0.5;
+  filter:progid:DXImageTransform.Microsoft.Alpha(opacity=50);
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  z-index: 11;
+}
+.img-hotspot-highlight{
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 12;
+  width: 100%;
+  height: 100%;
+  display: none;
+  background-repeat: no-repeat;
+}
+.form-managed-file div.image-widget-data {
+  float: none;
+}
+.img-hotspot-box {
+  position: absolute;
+  z-index: 11;
+}
+.img-hotspot-1 {
+  background-color: #6666FF;
+}
+.img-hotspot-2 {
+  background-color: #66CCCC;
+}
+.img-hotspot-3 {
+  background-color: #FF3366;
+}
+.img-hotspot-4 {
+  background-color: #FF3300;
+}
+.img-hotspot-5 {
+  background-color: #FFFF66;
+}
+.img-hotspot-6 {
+  background-color: #33FF66;
+}
+.img-hotspot-7 {
+  background-color: #99FF66;
+}
+.img-hotspot-8 {
+  background-color: #FFCC99;
+}
+.img-hotspot-9 {
+  background-color: #9966FF;
+}
+.img-hotspot-10 {
+  background-color: #33CCFF;
+}

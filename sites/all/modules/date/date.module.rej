@@ -1,0 +1,10 @@
+--- date.module
++++ date.module
+@@ -536,6 +536,7 @@
+   if (!empty($field['settings']['todate'])) {
+     // Define a simple data structure containing both dates.
+     $property['type'] = ($field['cardinality'] != 1) ? 'list<struct>' : 'struct';
++    $property['auto creation'] = 'date_entity_metadata_struct_create';
+     $property['getter callback'] = 'entity_metadata_field_verbatim_get';
+     $property['setter callback'] = 'entity_metadata_field_verbatim_set';
+     $property['property info'] = array(

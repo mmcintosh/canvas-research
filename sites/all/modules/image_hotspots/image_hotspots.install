@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * Implements hook_schema().
+ */
+function image_hotspots_schema() {
+  $schema['image_hotspot'] = array(
+    'description' => 'Stores data for image hotspots.',
+    'fields' => array(
+      'hid' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique hotspot ID.',
+      ),
+      'fid' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Primary Key: File ID that contains hotspots.',
+      ),
+      'coordinates' => array(
+        'type' => 'text',
+        'not null' => TRUE,
+        'description' => 'The hotspots data (JSON).',
+      ),
+    ),
+    'primary key' => array('hid', 'fid'),
+  );
+
+  return $schema;
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function image_hotspots_uninstall() {
+  variable_del('image_hotspot_fields');
+}
