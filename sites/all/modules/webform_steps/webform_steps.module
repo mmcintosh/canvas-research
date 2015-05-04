@@ -20,6 +20,7 @@ function webform_steps_form_webform_client_form_alter(&$form, &$form_state, $for
   $page_count = $form['details']['page_count']['#value'];
   if($page_count > 1) {
     array_unshift($form['#submit'], '_webform_steps_mark_step_done');
+    array_unshift($form['#submit'], 'webform_steps_navigation_callback');
 
     // Sadly there is nothing we can do about webform-form.tpl.php rendering
     // $form['submitted'] above all other form elements.
@@ -28,7 +29,17 @@ function webform_steps_form_webform_client_form_alter(&$form, &$form_state, $for
       '#theme' => 'webform_steps',
       '#weight' => -1000,
       '#attributes' => array('class' => array('webform-steps-wrapper')),
-    ) + _webform_steps_generate($form, $form_state);
+    );
+    // Hitting enter to submit always submits via the first button in the markup.
+    // We want this to always be the next button.
+    $button = isset($form['actions']['submit']) ? $form['actions']['submit'] : $form['actions']['next'];
+    unset($button['#id']);
+    $form['webform_steps']['next'] = array(
+      '#attributes' => array('class' => array('element-invisible')),
+      '#weight' => -100,
+    ) + $button;
+    // The actual webform steps.
+    $form['webform_steps'] += _webform_steps_generate($form, $form_state);
   }
 }
 
@@ -86,7 +97,6 @@ class WebformStepsButtonBuilder {
     $this->finished = $finished;
     $this->default = array(
       '#type' => 'submit',
-      '#submit' => array('webform_steps_navigation_callback', 'webform_client_form_pages', 'webform_client_form_submit'),
       '#attributes' => array('class' => array('step-button')),
       '#name' => 'step-btn',
     );
@@ -159,11 +169,15 @@ class WebformStepsButtonBuilder {
  * @see webform_client_form_pages().
  */
 function webform_steps_navigation_callback(&$form, &$form_state) {
-  $new_page = (int) $form_state['clicked_button']['#page'];
+  $button = &$form_state['clicked_button'];
+  if (!isset($button['#page'])) {
+    return;
+  }
+  $new_page = (int) $button['#page'];
   $old_page = &$form_state['webform']['page_num'];
   if ($old_page <= $new_page && $new_page > 1) {
     // simulate click on next.
-    $form_state['clicked_button']['#parents'][] =  'next';
+    $button['#parents'][] =  'next';
     $old_page = $new_page - 1;
   } else {
     // prohibit jumps of more than one step forward at once, after the user
@@ -198,9 +212,15 @@ function theme_webform_steps($variables) {
   $output = array();
   foreach ($buttons as $key) {
     $button = &$element[$key];
-    $classes = 'webform-step ' . implode(' ', $button['#wrapper_classes']);
-    $rendered = render($button);
-    $output[] = "<span class=\"$classes\"><span>{$button['#value']}{$rendered}</span></span>";
+    if ($key == 'next') {
+      $output[] = render($button);
+    }
+    else {
+      $button = &$element[$key];
+      $classes = 'webform-step ' . implode(' ', $button['#wrapper_classes']);
+      $rendered = render($button);
+      $output[] = "<span class=\"$classes\"><span>{$button['#value']}{$rendered}</span></span>";
+    }
   }
   return implode('', $output);
 }

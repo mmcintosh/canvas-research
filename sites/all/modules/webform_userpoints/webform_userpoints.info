@@ -6,9 +6,9 @@ package = Webform
 core = 7.x
 
 
-; Information added by Drupal.org packaging script on 2014-10-06
-version = "7.x-1.x-dev"
+; Information added by Drupal.org packaging script on 2015-03-17
+version = "7.x-1.0"
 core = "7.x"
 project = "webform_userpoints"
-datestamp = "1412621277"
+datestamp = "1426615984"
 

@@ -119,13 +119,7 @@ class quiz_views_handler_filter_quiz_nid extends views_handler_filter {
       $this->secondary_table_alias = $this->query->ensure_table($this->secondary_table);
       $this->query->add_groupby("$this->secondary_table_alias.$this->secondary_group_by");
     }
-    //Old Code
-	//$this->query->add_where(0, "$this->secondary_table_alias.$this->secondary_vid", $this->subselect());
-  
-    //New code
-    $max_vid_subquery = "SELECT MAX(vid) FROM quiz_node_properties WHERE quiz_node_properties.nid = node_quiz_node_properties.nid";
-    $where_clause = "quiz_node_properties.vid = ($max_vid_subquery)";
-    $this->query->add_where_expression($this->options['group'], $where_clause);	
+    $this->query->add_where(0, "$this->secondary_table_alias.$this->secondary_vid", $this->subselect());
   }
 
   /**

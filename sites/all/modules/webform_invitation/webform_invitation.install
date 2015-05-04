@@ -105,8 +105,37 @@ function webform_invitation_disable() {
 	}
 }
 
+/**
+ * Add submission id column to codes table and component id column to base table.
+ */
 function webform_invitation_update_7200() {
-  db_add_field('webform_invitation', 'cid', array('type' => 'int', 'not null' => TRUE, 'default' => 0, 'description' => 'Component ID of Webform Invitation textfield.'));
-  db_add_field('webform_invitation_codes', 'sid', array('type' => 'int', 'not null' => TRUE, 'default' => 0, 'description' => 'The submission ID using this code.'));
-  return t('Webform Invitation database tables have been updated.');
+	db_add_field('webform_invitation', 'cid', array('type' => 'int', 'not null' => TRUE, 'default' => 0, 'description' => 'Component ID of Webform Invitation textfield.'));
+	db_add_field('webform_invitation_codes', 'sid', array('type' => 'int', 'not null' => TRUE, 'default' => 0, 'description' => 'The submission ID using this code.'));
+}
+
+/**
+ * Ensure that existing webform entries in base table have the correct cid set.
+ */
+function webform_invitation_update_7201() {
+	$db_settings = db_select('webform_invitation', 'i')
+	    ->fields('i')
+	    ->condition('invitation', 1, '=')
+	    ->execute();
+	while ($result = $db_settings->fetchAssoc()) {
+		$node = node_load($result['nid']);
+		/* 
+		 * The actual component ID is in $result['cid']
+		 * but we better check for the form_key
+		 */
+	    foreach ($node->webform['components'] AS $id => $com) {
+			if ($com['form_key'] == 'webform_invitation_code') {
+				db_merge('webform_invitation')->key(array('nid' => $result['nid']))
+				    ->fields(array(
+				      'cid' => $id,
+				      ))
+				    ->execute();
+				break;
+			}
+	    }
+	}
 }

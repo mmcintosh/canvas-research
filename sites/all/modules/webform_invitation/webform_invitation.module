@@ -139,8 +139,8 @@ function webform_invitation_codes_page($node) {
     ->fields('c')
     ->condition('nid', $nid, '=')
     ->execute()->fetchAll();
-  $out = "<h2>" . t('All invitation codes for') . ' "' . $node->title . '"' . "</h2>";
-  $out .= "<p><a href='".$base_url."/node/".$nid."/webform/invitation-download'>Download Codes</a></p>";
+  $out = "<h2>" . t('All invitation codes for %node_title', array("%node_title" => $node->title)) . "</h2>";
+  $out .= "<p><a href='".$base_url."/node/".$nid."/webform/invitation-download'>" . t('Download Codes') . "</a></p>";
   if (count($codes) > 0) {
     $out .= "<table><tr><th>". t('Code') . "</th><th>" . t('used?') . "</th><th>" . t('Submission ID') . "</th></tr>";
   	foreach ($codes AS $code) {
@@ -162,7 +162,7 @@ function webform_invitation_generate_page($node) {
 function webform_invitation_generate_form($form, &$form_state, $node) {
   $nid = $node->nid;
   $form['intro'] = array(
-    '#markup' => '<h2>' . t('Generate new codes for "!node_title"', array("!node_title" => $node->title)) . '</h2><p>' . t('To generate codes please enter the required number of codes and hit the button.') . '</p>',
+    '#markup' => '<h2>' . t('Generate new codes for %node_title', array("%node_title" => $node->title)) . '</h2><p>' . t('To generate codes please enter the required number of codes and hit the button.') . '</p>',
   );
   $form['nid'] = array(
     '#type' => 'hidden',
@@ -317,13 +317,13 @@ function webform_invitation_generate_form_submit($form, &$form_state) {
   }
   $codes_count = $i - 1;
   if ($l >= $number * 10) {
-    drupal_set_message(t('Due to unique constraint, only !ccount codes have been generated.', array('!ccount' => $codes_count)),'error');
+    drupal_set_message(t('Due to unique constraint, only @ccount codes have been generated.', array('@ccount' => $codes_count)),'error');
   }
   elseif ($codes_count == 1) {
     drupal_set_message(t('A single code has been generated.'),'status');
   }
   elseif ($codes_count >= 2) {
-    drupal_set_message(t('A total of !ccount codes has been generated.', array('!ccount' => $codes_count)),'status');
+    drupal_set_message(t('A total of @ccount codes has been generated.', array('@ccount' => $codes_count)),'status');
   }
   drupal_goto('node/'.$nid.'/webform/invitation-codes');
 }
@@ -354,7 +354,7 @@ function webform_invitation_code_validate($form, &$form_state) {
       ->execute()
       ->fetchAssoc();
     if (!isset($result) || $result == null) {
-      form_set_error('webform_invitation_code', 'This code is not valid.');
+      form_set_error('webform_invitation_code', t('This code is not valid.'));
     }
     elseif ($result['used'] > 0) {
       // Not required, handled by webform => UNIQUE option.
@@ -379,11 +379,23 @@ function webform_invitation_webform_submission_insert($node, $submission) {
     ->execute()
     ->fetchAssoc();
   if ($db_setting && (int) $db_setting['invitation'] == 1) {
+    if ($db_setting['cid'] > 0) {
+      $cid = $db_setting['cid'];
+    }
+    else {
+      $node = node_load($result['nid']);
+      foreach ($node->webform['components'] AS $id => $com) {
+        if ($com['form_key'] == 'webform_invitation_code') {
+          $cid = $id;
+          break;
+        }
+      }
+    }
     db_update('webform_invitation_codes')
       ->fields(array(
         'sid' => $submission->sid,
       ))
-      ->condition('code',$submission->data[$db_setting['cid']][0])
+      ->condition('code',$submission->data[$cid][0])
       ->execute();
   }
 }

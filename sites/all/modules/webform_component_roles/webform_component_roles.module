@@ -373,19 +373,28 @@ function _webform_component_roles_apply(&$renderable) {
   _webform_component_roles_flatten_components($renderable, $elements);
 
   foreach ($components as $cid => $component) {
-    $user_component_perms = ( empty($component['roles']) ? WEBFORM_COMPONENT_ROLES_READWRITE : WEBFORM_COMPONENT_ROLES_NONE );
-
-    foreach ($component['roles'] as $rid => $perms) {
-      $user_component_perms |= ( isset($user->roles[$rid]) ? $perms : 0 );
+    // Set initial permissions to maximum, and then reduce based on examination of
+    // component's permissions, and that of all its parents.
+    $user_component_perms = WEBFORM_COMPONENT_ROLES_READWRITE;
+    $level_cid = $cid;
+    while ( $level_cid ) {
+      $level_perms = ( empty($components[$level_cid]['roles']) ? WEBFORM_COMPONENT_ROLES_READWRITE : WEBFORM_COMPONENT_ROLES_NONE );
+      foreach ( $components[$level_cid]['roles'] as $rid => $perms ) {
+        $level_perms |= ( isset($user->roles[$rid]) ? $perms : 0 );
+      }
+      if ( $level_perms < $user_component_perms ) {
+        $user_component_perms = $level_perms;
+      }
+      $level_cid = $node->webform['components'][$level_cid]['pid'];
     }
-
     if ( $user_component_perms == WEBFORM_COMPONENT_ROLES_NONE ) {
       $elements[$component['form_key']]['#access'] = FALSE;
       $elements[$component['form_key']]['#required'] = FALSE;
     }
     elseif ( $user_component_perms == WEBFORM_COMPONENT_ROLES_READ ) {
       $elements[$component['form_key']]['#required'] = FALSE;
-      $elements[$component['form_key']]['#attributes']['disabled'] = 'disabled';
+      $elements[$component['form_key']]['#disabled'] = TRUE;
     }
   }
 }
+

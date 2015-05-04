@@ -5,9 +5,9 @@ package = Webform
 dependencies[] = webform
 dependencies[] = token
 
-; Information added by Drupal.org packaging script on 2014-08-20
-version = "7.x-2.3"
+; Information added by Drupal.org packaging script on 2014-12-02
+version = "7.x-2.4"
 core = "7.x"
 project = "webform_invitation"
-datestamp = "1408569835"
+datestamp = "1417561828"
 
