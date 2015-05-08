@@ -135,13 +135,20 @@ function webform_component_roles_form_webform_configure_form_alter(&$form, &$for
  * Additional submit handler for webform_configure_form().
  */
 function webform_component_roles_form_webform_configure_form_submit(&$form, &$form_state) {
-  $deny_rids = array_fill_keys(array_keys(array_filter($form_state['values']['roles_deny'])), WEBFORM_COMPONENT_ROLES_NONE);
-  $read_rids = array_fill_keys(array_keys(array_filter($form_state['values']['roles_read'])), WEBFORM_COMPONENT_ROLES_READ);
-  $write_rids = array_fill_keys(array_keys(array_filter($form_state['values']['roles_write'])), WEBFORM_COMPONENT_ROLES_READWRITE);
+  $deny_rids = $read_rids = $write_rids = array();
+  if(isset($form_state['values']['roles_deny'])) {
+    $deny_rids = array_fill_keys(array_keys(array_filter($form_state['values']['roles_deny'])), WEBFORM_COMPONENT_ROLES_NONE);
+  }
+  if(isset($form_state['values']['roles_read'])) {
+    $read_rids = array_fill_keys(array_keys(array_filter($form_state['values']['roles_read'])), WEBFORM_COMPONENT_ROLES_READ);
+  }
+  if(isset($form_state['values']['roles_write'])) {
+    $write_rids = array_fill_keys(array_keys(array_filter($form_state['values']['roles_write'])), WEBFORM_COMPONENT_ROLES_READWRITE);
+  }
 
   $component_perms = $write_rids + $read_rids + $deny_rids;
 
-  if ( $component_perms != $form_state['storage']['roles_old'][$form['cid']['#value']] ) {
+  if(isset($form['cid']) && isset($form['cid']['#value']) && isset($form_state['storage']['roles_old'][$form['cid']['#value']]) && ($component_perms != $form_state['storage']['roles_old'][$form['cid']['#value']])) {
     _webform_component_roles_delete_component_roles($form['#node']->nid, $form['cid']['#value']);
     _webform_component_roles_insert_component_roles($form['#node']->nid, $form['cid']['#value'], $component_perms);
   }
@@ -397,4 +404,3 @@ function _webform_component_roles_apply(&$renderable) {
     }
   }
 }
-

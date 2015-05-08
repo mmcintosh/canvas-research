@@ -1,4 +1,4 @@
-/user**
+/**
  * @file
  * Normalize.css is intended to be used as an alternative to CSS resets.
  *
@@ -631,7 +631,7 @@ div.panels-flexible-column-neighborhood-1 h2 {
 div#block-userloginbar-userloginbar {
     width: 100% !important;
     top: -40px !important;
-    float: right;
+    float: left !important;
     position: relative !important;
     color: #7C7C7C;
 }
@@ -639,7 +639,7 @@ div#block-userloginbar-userloginbar {
 
 /* #user-login-form,  {
     width: 100% !important;
-    float: right;
+    float: left !important;
     position: relative !important;
     color: #7C7C7C;
     }
@@ -647,7 +647,7 @@ div#block-userloginbar-userloginbar {
 div#user-login-form {
 	top: 0px !important;
 	width: 100% !important;
-    float: right;
+    float: left !important;
     position: relative !important;
     left: 0px !important;
     color: #7C7C7C;
@@ -661,10 +661,10 @@ div#user-login-form {
 }
 
 #user-login-form p.user-info, #user-login-form div.item-list ul.welcome-box {
-  float: right;
+  float: left;
   margin: 0;
   padding: 0;
-  text-align: right;
+  text-align: left !important;
   width: 83%;
 }
 
